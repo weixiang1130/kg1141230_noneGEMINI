@@ -5,33 +5,33 @@ import { QualityRow } from '../types';
 const STORAGE_KEY = 'quality_control_data';
 
 const QUALITY_PLANS = [
-  "1.施工架計畫", 
-  "2.終層開挖計畫", 
-  "3.鐵捲門計畫", 
-  "4.穿樑計畫", 
-  "5.一樓高程計畫", 
-  "6.實品屋計畫", 
-  "7.外飾計畫", 
-  "8.屋頂計畫", 
-  "9.泳池計畫", 
-  "10.防水計畫", 
-  "11.交驗屋計畫", 
+  "1.施工架計畫",
+  "2.終層開挖計畫",
+  "3.鐵捲門計畫",
+  "4.穿樑計畫",
+  "5.一樓高程計畫",
+  "6.實品屋計畫",
+  "7.外飾計畫",
+  "8.屋頂計畫",
+  "9.泳池計畫",
+  "10.防水計畫",
+  "11.交驗屋計畫",
   "12.門窗開口MO計畫"
 ];
 
 // --- Shared Helper Components ---
 
-const BufferedInput = ({ 
-  value, 
-  onCommit, 
-  className, 
-  placeholder, 
+const BufferedInput = ({
+  value,
+  onCommit,
+  className,
+  placeholder,
   type = 'text',
   disabled = false
-}: { 
-  value: string; 
-  onCommit: (val: string) => void; 
-  className?: string; 
+}: {
+  value: string;
+  onCommit: (val: string) => void;
+  className?: string;
   placeholder?: string;
   type?: string;
   disabled?: boolean;
@@ -70,16 +70,16 @@ const BufferedInput = ({
   );
 };
 
-const CustomDatePicker = ({ 
-  isOpen, 
-  onClose, 
-  onSelect, 
-  initialDate 
-}: { 
-  isOpen: boolean; 
-  onClose: () => void; 
-  onSelect: (date: string) => void; 
-  initialDate: string; 
+const CustomDatePicker = ({
+  isOpen,
+  onClose,
+  onSelect,
+  initialDate
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (date: string) => void;
+  initialDate: string;
 }) => {
   if (!isOpen) return null;
 
@@ -154,7 +154,7 @@ const CustomDatePicker = ({
           <div className="grid grid-cols-7 gap-1 place-items-center">{days}</div>
         </div>
         <div className="p-3 border-t bg-gray-50 flex justify-between items-center">
-           <button type="button" onClick={handleToday} className="text-sm text-teal-600 font-medium hover:text-teal-800 px-2 py-1">跳至今天</button>
+          <button type="button" onClick={handleToday} className="text-sm text-teal-600 font-medium hover:text-teal-800 px-2 py-1">跳至今天</button>
           <button type="button" onClick={onClose} className="text-sm text-gray-500 font-medium hover:text-gray-700 px-3 py-1 hover:bg-gray-200 rounded">取消</button>
         </div>
       </div>
@@ -162,16 +162,16 @@ const CustomDatePicker = ({
   );
 };
 
-const DateInput = ({ 
-  value, 
-  onChange, 
-  className, 
+const DateInput = ({
+  value,
+  onChange,
+  className,
   disabled = false,
   onOpenPicker
-}: { 
-  value: string; 
-  onChange: (val: string) => void; 
-  className?: string; 
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  className?: string;
   disabled?: boolean;
   onOpenPicker: () => void;
 }) => {
@@ -248,19 +248,20 @@ export const QualityTable: React.FC<QualityTableProps> = ({ currentProjectId, cu
   // --- Auto-Initialize Data for New Projects ---
   useEffect(() => {
     const hasData = allRows.some(r => r.projectId === currentProjectId);
-    
+
     if (!hasData && currentProjectId) {
       // Generate default 12 rows
       const newRows: QualityRow[] = QUALITY_PLANS.map(planName => ({
         id: crypto.randomUUID(),
         projectId: currentProjectId,
         planName: planName,
+        scheduledSubmissionDate: '', // Initialize new field
         submissionDate: '',
         reviewDate: '',
         approvalDate: '',
         owner: ''
       }));
-      
+
       setAllRows(prev => [...prev, ...newRows]);
     }
   }, [currentProjectId, allRows]);
@@ -293,14 +294,15 @@ export const QualityTable: React.FC<QualityTableProps> = ({ currentProjectId, cu
 
   const exportCSV = () => {
     const headers = [
-      "計畫名稱", "提送日期", "審查日期", "核定備查日期", "承辦人員"
+      "計畫名稱", "預定提送日期", "提送日期", "審查日期", "核定備查日期", "承辦人員"
     ];
-    
+
     const csvContent = [
       headers.join(','),
       ...displayRows.map(row => {
         return [
           row.planName,
+          row.scheduledSubmissionDate,
           row.submissionDate,
           row.reviewDate,
           row.approvalDate,
@@ -326,7 +328,7 @@ export const QualityTable: React.FC<QualityTableProps> = ({ currentProjectId, cu
 
   return (
     <div className="flex flex-col h-full bg-white shadow-xl rounded-lg overflow-hidden border border-gray-200">
-      <CustomDatePicker 
+      <CustomDatePicker
         isOpen={pickerState.isOpen}
         initialDate={pickerState.currentDate}
         onSelect={handleDateSelect}
@@ -335,8 +337,8 @@ export const QualityTable: React.FC<QualityTableProps> = ({ currentProjectId, cu
 
       <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
         <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-            <ClipboardCheck className="text-teal-600" />
-            施工計畫書送審管制表
+          <ClipboardCheck className="text-teal-600" />
+          施工計畫書送審管制表
         </h2>
         <div className="flex items-center gap-2">
           <button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors shadow-sm text-sm font-medium">
@@ -350,6 +352,7 @@ export const QualityTable: React.FC<QualityTableProps> = ({ currentProjectId, cu
           <thead className="sticky top-0 z-10 shadow-sm">
             <tr className="divide-x divide-gray-300 border-b border-gray-300 text-xs">
               <th className="bg-gray-100 p-2 min-w-[200px] text-left font-bold text-gray-700 pl-4">計畫項目</th>
+              <th className="bg-teal-50 p-2 min-w-[150px] font-semibold text-teal-800 border-l border-teal-100">預定提送日期</th>
               <th className="bg-teal-50 p-2 min-w-[150px] font-semibold text-teal-800">提送日期</th>
               <th className="bg-teal-50 p-2 min-w-[150px] font-semibold text-teal-800">審查日期</th>
               <th className="bg-teal-50 p-2 min-w-[150px] font-semibold text-teal-800">核定備查日期</th>
@@ -364,36 +367,44 @@ export const QualityTable: React.FC<QualityTableProps> = ({ currentProjectId, cu
                     {row.planName}
                   </div>
                 </td>
-                <td className="p-1 border-r border-teal-50 bg-teal-50/20">
-                  <DateInput 
-                    value={row.submissionDate} 
-                    onChange={(v) => updateRow(row.id, 'submissionDate', v)} 
-                    className={getInputClass(true)} 
-                    onOpenPicker={() => handleOpenPicker(row.id, 'submissionDate', row.submissionDate)} 
+                <td className="p-1 border-r border-teal-50 bg-teal-50/10">
+                  <DateInput
+                    value={row.scheduledSubmissionDate}
+                    onChange={(v) => updateRow(row.id, 'scheduledSubmissionDate', v)}
+                    className={getInputClass(true)}
+                    onOpenPicker={() => handleOpenPicker(row.id, 'scheduledSubmissionDate', row.scheduledSubmissionDate)}
                   />
                 </td>
                 <td className="p-1 border-r border-teal-50 bg-teal-50/20">
-                  <DateInput 
-                    value={row.reviewDate} 
-                    onChange={(v) => updateRow(row.id, 'reviewDate', v)} 
-                    className={getInputClass(true)} 
-                    onOpenPicker={() => handleOpenPicker(row.id, 'reviewDate', row.reviewDate)} 
+                  <DateInput
+                    value={row.submissionDate}
+                    onChange={(v) => updateRow(row.id, 'submissionDate', v)}
+                    className={getInputClass(true)}
+                    onOpenPicker={() => handleOpenPicker(row.id, 'submissionDate', row.submissionDate)}
                   />
                 </td>
                 <td className="p-1 border-r border-teal-50 bg-teal-50/20">
-                  <DateInput 
-                    value={row.approvalDate} 
-                    onChange={(v) => updateRow(row.id, 'approvalDate', v)} 
-                    className={getInputClass(true)} 
-                    onOpenPicker={() => handleOpenPicker(row.id, 'approvalDate', row.approvalDate)} 
+                  <DateInput
+                    value={row.reviewDate}
+                    onChange={(v) => updateRow(row.id, 'reviewDate', v)}
+                    className={getInputClass(true)}
+                    onOpenPicker={() => handleOpenPicker(row.id, 'reviewDate', row.reviewDate)}
+                  />
+                </td>
+                <td className="p-1 border-r border-teal-50 bg-teal-50/20">
+                  <DateInput
+                    value={row.approvalDate}
+                    onChange={(v) => updateRow(row.id, 'approvalDate', v)}
+                    className={getInputClass(true)}
+                    onOpenPicker={() => handleOpenPicker(row.id, 'approvalDate', row.approvalDate)}
                   />
                 </td>
                 <td className="p-1">
-                  <BufferedInput 
-                    value={row.owner} 
-                    onCommit={(v) => updateRow(row.id, 'owner', v)} 
-                    className={getInputClass()} 
-                    placeholder="承辦人..." 
+                  <BufferedInput
+                    value={row.owner}
+                    onCommit={(v) => updateRow(row.id, 'owner', v)}
+                    className={getInputClass()}
+                    placeholder="承辦人..."
                   />
                 </td>
               </tr>
@@ -402,12 +413,12 @@ export const QualityTable: React.FC<QualityTableProps> = ({ currentProjectId, cu
         </table>
         {displayRows.length === 0 && (
           <div className="text-center py-12 text-gray-400">
-             <p className="animate-pulse">正在初始化計畫列表...</p>
+            <p className="animate-pulse">正在初始化計畫列表...</p>
           </div>
         )}
       </div>
       <div className="p-2 bg-gray-50 border-t text-xs text-gray-500 text-center">
-         包含 12 項標準施工計畫書之送審與核定時程管制
+        包含 12 項標準施工計畫書之送審與核定時程管制
       </div>
     </div>
   );

@@ -25,9 +25,8 @@ export interface ProcurementRow {
   actualRequestDate: string;    // 實際提出時間 (D)
   siteOrganizer: string;       // 工地主辦
   procurementOrganizer: string;// 採發主辦
-  returnDate: string;          // 退件日期
-  returnReason: string;        // 退件原因
-  resubmissionDate: string;    // 重新提送日期
+  procurementSignOffDate: string; // 採購承辦簽出日期
+  controlledDuration: string;     // 列控採購作業時間
   contractorConfirmDate: string;// 確認承攬商日期
   contractorName: string;      // 廠商
 }
@@ -55,6 +54,7 @@ export interface QualityRow {
   id: string;
   projectId: string;
   planName: string;        // 計畫名稱 (例如：施工架計畫) - 固定不可改
+  scheduledSubmissionDate: string; // New Field: 預定提送日期
   submissionDate: string;  // 提送日期
   reviewDate: string;      // 審查日期
   approvalDate: string;    // 核定備查日期
